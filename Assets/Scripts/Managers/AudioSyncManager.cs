@@ -21,11 +21,13 @@ public class AudioSyncManager : MonoBehaviour
     [SerializeField] private double scheduleLeadTime = 0.2;
 
     private double dspSongStartTime;
+    private double pauseStartDspTime;
     private bool isPlaying;
+    private bool isPaused;
 
     public float SongTime => isPlaying 
-    ? (float)(AudioSettings.dspTime - dspSongStartTime)
-    : 0f;
+        ? (float)(AudioSettings.dspTime - dspSongStartTime)
+        : 0f;
 
     public void PlaySong(AudioClip clip)
     {
@@ -39,19 +41,46 @@ public class AudioSyncManager : MonoBehaviour
         dspSongStartTime = AudioSettings.dspTime + scheduleLeadTime;
         musicSource.PlayScheduled(dspSongStartTime);
         isPlaying = true;
+        isPaused = false;
     }
 
+    /// <summary>Pauses playback in a way SongTime can recover from cleanly (see Resume).</summary>
+    public void Pause()
+    {
+        if (!isPlaying || isPaused) return;
+        musicSource.Pause();
+        pauseStartDspTime = AudioSettings.dspTime;
+        isPaused = true;
+    }
+ 
+    /// <summary>
+    /// Resumes after Pause(). AudioSettings.dspTime keeps advancing the whole
+    /// time the game is paused, so without correction SongTime would jump
+    /// ahead by the pause duration the instant we resume, desyncing every
+    /// note still in flight. Shifting dspSongStartTime forward by exactly how
+    /// long we were paused keeps SongTime continuous with actual playback.
+    /// </summary>
+    public void Resume()
+    {
+        if (!isPlaying || !isPaused) return;
+        double pausedDuration = AudioSettings.dspTime - pauseStartDspTime;
+        dspSongStartTime += pausedDuration;
+        musicSource.UnPause();
+        isPaused = false;
+    }
+    
     public void StopSong()
     {
         musicSource.Stop();
         isPlaying = false;
+        isPaused = false;
     }
 
     private float lastLogTime;
 
     private void Update()
     {
-        if (!isPlaying) return;
+        if (!isPlaying || isPaused) return;
 
         if (SongTime - lastLogTime >= 1f)
         {
