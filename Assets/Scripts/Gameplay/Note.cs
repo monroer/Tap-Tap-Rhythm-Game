@@ -66,10 +66,8 @@ public class Note : MonoBehaviour
     
     public void RegisterHit()
     {
-        State = result;
-        Debug.Log(result == NoteState.Hit ? "Note hit!" : "Note missed!");
-        OnResolved?.Invoke(this);
-        Destroy(gameObject);
+        if (State != NoteState.Waiting) return;
+        Resolve(NoteState.Hit);
     }
 
     private void Resolve(NoteState result)
