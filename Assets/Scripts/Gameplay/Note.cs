@@ -1,6 +1,8 @@
 using Unity.VisualScripting;
 using UnityEngine;
+
 public enum NoteState { Waiting, Hit, Missed }
+
 public class Note : MonoBehaviour
 {
     [SerializeField] private float fallDuration = 2f;
@@ -8,16 +10,37 @@ public class Note : MonoBehaviour
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 hitZonePosition;
 
-    public void Initialize(Vector3 start, Vector3 hitZone, float duration)
+    /// <summary>Which rail this note belongs to.</summary>
+    public int Rail { get; private set; }
+ 
+    /// <summary>
+    /// Absolute song time in seconds, matching AudioSyncManager.SongTime at
+    /// which this note reaches the hit zone. This is the value HitDetectionManager
+    /// compares tap time against.
+    /// </summary>
+    public float TargetHitTime { get; private set; }
+ 
+    public NoteState State { get; private set; } = NoteState.Waiting;
+ 
+    /// <summary>
+    /// Fired exactly once, right before this note is destroyed, whether it was
+    /// hit or missed. HitDetectionManager subscribes to this to know when to
+    /// stop tracking the note.
+    /// </summary>
+    public event Action<Note> OnResolved;
+ 
+    private float elapsed;
+    
+    public void Initialize(Vector3 start, Vector3 hitZone, float duration, int rail, float targetHitTime)
     {
         startPosition = start;
         hitZonePosition = hitZone;
         fallDuration = duration;
+        Rail = rail;
+        TargetHitTime = targetHitTime;
         elapsed = 0f;
         state = NoteState.Waiting;
     }
-    private float elapsed;
-    private NoteState state = NoteState.Waiting;
 
     private void Update()
     {
@@ -27,17 +50,25 @@ public class Note : MonoBehaviour
 
         if (state == NoteState.Waiting && elapsed >= fallDuration + missWindow)
         {
-            state = NoteState.Missed;
-            Debug.Log("Note missed!");
-            Destroy(gameObject);
+            Resolve(NoteState.Missed);
         }
     }
 
+    /// <summary>
+    /// Called by HitDetectionManager when a tap targeted this note but fell
+    /// outside the acceptable timing window.
+    /// </summary>
+    public void RegisterMiss()
+    {
+        if (State != NoteState.Waiting) return;
+        Resolve(NoteState.Missed);
+    }
+    
     public void RegisterHit()
     {
-        if (state != NoteState.Waiting) return;
-        state = NoteState.Hit;
-        Debug.Log("Note hit!");
+        State = result;
+        Debug.Log(result == NoteState.Hit ? "Note hit!" : "Note missed!");
+        OnResolved?.Invoke(this);
         Destroy(gameObject);
     }
 }
