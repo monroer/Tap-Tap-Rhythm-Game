@@ -6,8 +6,8 @@ public class NoteSpawner : MonoBehaviour
     [SerializeField] private BeatMapManager beatMapManager;
     [SerializeField] private AudioSyncManager audioSyncManager;
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private HitDetectionManager hitDetectionManager;
     [SerializeField] private GameObject notePrefab;
-
     [SerializeField] private float fallDuration = 2f;
     [SerializeField] private float spawnY = 5f;
     [SerializeField] private float hitZoneY = -3f;
@@ -19,12 +19,10 @@ public class NoteSpawner : MonoBehaviour
     {
         float railWidth = Screen.width / (float)inputManager.railCount;
         float screenX = (rail + 0.5f) * railWidth;
-
         float camDepth = -Camera.main.transform.position.z;
         Vector3 worldPoint = Camera.main.ScreenToWorldPoint(
             new Vector3(screenX, Screen.height / 2f, camDepth));
-
-            return worldPoint.x;
+        return worldPoint.x;
     }
 
     private void Start()
@@ -40,7 +38,13 @@ public class NoteSpawner : MonoBehaviour
 
         GameObject noteObj = Instantiate(notePrefab, startPos, Quaternion.identity);
         Note note = noteObj.GetComponent<Note>();
-        note.Initialize(startPos, hitPos, fallDuration);
+        
+        note.Initialize(startPos, hitPos, fallDuration, data.rail, data.time);
+
+        if (hitDetectionManager != null)
+        {
+            hitDetectionManager.RegisterNote(note);
+        }
     }
     private void Update()
     {
@@ -55,4 +59,10 @@ public class NoteSpawner : MonoBehaviour
             nextNoteIndex++;
         }
     }
+
+    /// <summary>Stops spawning new notes. Notes already in flight are unaffected. Intended for GameManager to call on pause/game over.</summary>
+    public void StopSpawning() => enabled = false;
+ 
+    /// <summary>Resumes spawning. Intended for GameManager to call on resume/gameplay start.</summary>
+    public void ResumeSpawning() => enabled = true;
 }
