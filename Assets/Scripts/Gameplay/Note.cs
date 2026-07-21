@@ -39,7 +39,7 @@ public class Note : MonoBehaviour
         Rail = rail;
         TargetHitTime = targetHitTime;
         elapsed = 0f;
-        state = NoteState.Waiting;
+        State = NoteState.Waiting;
     }
 
     private void Update()
@@ -48,7 +48,7 @@ public class Note : MonoBehaviour
         float t = Mathf.Clamp01(elapsed / fallDuration);
         transform.position = Vector3.Lerp(startPosition, hitZonePosition, t);
 
-        if (state == NoteState.Waiting && elapsed >= fallDuration + missWindow)
+        if (State == NoteState.Waiting && elapsed >= fallDuration + missWindow)
         {
             Resolve(NoteState.Missed);
         }
@@ -65,6 +65,14 @@ public class Note : MonoBehaviour
     }
     
     public void RegisterHit()
+    {
+        State = result;
+        Debug.Log(result == NoteState.Hit ? "Note hit!" : "Note missed!");
+        OnResolved?.Invoke(this);
+        Destroy(gameObject);
+    }
+
+    private void Resolve(NoteState result)
     {
         State = result;
         Debug.Log(result == NoteState.Hit ? "Note hit!" : "Note missed!");
