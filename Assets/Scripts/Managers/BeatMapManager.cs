@@ -1,0 +1,98 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+[System.Serializable]
+public struct NoteData
+{
+    public float time;
+    public int rail;
+}
+
+public class BeatMapManager : MonoBehaviour
+{
+    [SerializeField]
+    private List<NoteData> notes = new List<NoteData>
+    {
+        new NoteData { time = 2.136f, rail = 0 },
+        new NoteData { time = 2.763f, rail = 3 },
+        new NoteData { time = 3.379f, rail = 1 },
+        new NoteData { time = 4.412f, rail = 2 },
+        new NoteData { time = 5.457f, rail = 1 },
+        new NoteData { time = 6.072f, rail = 3 },
+        new NoteData { time = 6.687f, rail = 0 },
+        new NoteData { time = 7.721f, rail = 3 },
+        new NoteData { time = 8.766f, rail = 0 },
+        new NoteData { time = 9.381f, rail = 1 },
+        new NoteData { time = 9.996f, rail = 2 },
+        new NoteData { time = 11.041f, rail = 3 },
+        new NoteData { time = 12.074f, rail = 2 },
+        new NoteData { time = 12.69f, rail = 3 },
+        new NoteData { time = 13.735f, rail = 2 },
+        new NoteData { time = 14.35f, rail = 3 },
+        new NoteData { time = 14.977f, rail = 1 },
+        new NoteData { time = 17.032f, rail = 0 },
+        new NoteData { time = 17.659f, rail = 3 },
+        new NoteData { time = 18.286f, rail = 1 },
+        new NoteData { time = 19.528f, rail = 2 },
+        new NoteData { time = 20.341f, rail = 1 },
+        new NoteData { time = 20.968f, rail = 0 },
+        new NoteData { time = 21.595f, rail = 3 },
+        new NoteData { time = 22.221f, rail = 2 },
+        new NoteData { time = 23.65f, rail = 1 },
+        new NoteData { time = 24.288f, rail = 2 },
+        new NoteData { time = 24.903f, rail = 3 },
+        new NoteData { time = 26.146f, rail = 1 },
+        new NoteData { time = 26.97f, rail = 2 },
+        new NoteData { time = 27.597f, rail = 1 },
+        new NoteData { time = 28.212f, rail = 0 },
+        new NoteData { time = 29.455f, rail = 1 },
+        new NoteData { time = 30.279f, rail = 2 },
+        new NoteData { time = 30.906f, rail = 3 },
+        new NoteData { time = 31.521f, rail = 0 },
+        new NoteData { time = 32.763f, rail = 3 },
+        new NoteData { time = 33.588f, rail = 2 },
+        new NoteData { time = 34.215f, rail = 0 },
+        new NoteData { time = 34.83f, rail = 2 },
+        new NoteData { time = 35.457f, rail = 0 },
+        new NoteData { time = 36.897f, rail = 3 },
+        new NoteData { time = 37.523f, rail = 2 },
+        new NoteData { time = 38.15f, rail = 1 },
+        new NoteData { time = 38.766f, rail = 0 },
+        new NoteData { time = 40.205f, rail = 3 },
+        new NoteData { time = 40.832f, rail = 1 },
+        new NoteData { time = 41.459f, rail = 3 },
+        new NoteData { time = 43.944f, rail = 2 },
+        new NoteData { time = 45.801f, rail = 3 },
+        new NoteData { time = 46.417f, rail = 2 },
+        new NoteData { time = 47.044f, rail = 0 },
+        new NoteData { time = 47.659f, rail = 2 },
+        new NoteData { time = 48.901f, rail = 1 },
+        new NoteData { time = 52.419f, rail = 2 },
+        new NoteData { time = 53.034f, rail = 0 },
+        new NoteData { time = 53.661f, rail = 2 },
+        new NoteData { time = 55.101f, rail = 0 },
+        new NoteData { time = 55.728f, rail = 3 },
+        new NoteData { time = 56.355f, rail = 2 },
+        new NoteData { time = 58.41f, rail = 3 },
+        new NoteData { time = 59.037f, rail = 2 },
+        new NoteData { time = 59.664f, rail = 1 },
+        new NoteData { time = 60.906f, rail = 3 },
+        new NoteData { time = 61.73f, rail = 1 },
+        new NoteData { time = 62.346f, rail = 0 },
+        new NoteData { time = 62.973f, rail = 3 },
+        new NoteData { time = 64.215f, rail = 1 },
+        new NoteData { time = 66.699f, rail = 0 },
+        new NoteData { time = 67.315f, rail = 2 },
+        new NoteData { time = 67.942f, rail = 3 },
+        new NoteData { time = 69.172f, rail = 0 },
+        new NoteData { time = 71.657f, rail = 2 },
+        new NoteData { time = 72.284f, rail = 0 },
+        new NoteData { time = 72.899f, rail = 3 },
+        new NoteData { time = 73.526f, rail = 1 },
+        new NoteData { time = 74.141f, rail = 0 },
+        new NoteData { time = 76.626f, rail = 1 },
+    };
+
+    public IReadOnlyList<NoteData> Notes => notes;
+
+}
