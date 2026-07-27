@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum HitResult { Perfect, Good, Miss }
+public enum HitResult { Perfect, Great, Good, Miss }
 
 /// <summary>
 /// Subscribes to InputManager.OnRailTapped, compares tap timing against each
@@ -19,6 +19,11 @@ public class HitDetectionManager : MonoBehaviour
     [Tooltip("Max |tap time - target time|, in ms, still counted as Perfect. " +
              "Requirements target ~24ms at the tight end.")]
     [SerializeField] private float perfectWindowMs = 24f;
+
+    [Tooltip("Max |tap time - target time|, in ms, still counted as a hit at all " +
+             "(Great, almost Perfect). Sits between Good and Perfect. Requirements " +
+             "target ~40ms between tight and loose end.")]
+    [SerializeField] private float greatWindowMs = 40f;
 
     [Tooltip("Max |tap time - target time|, in ms, still counted as a hit at all " +
              "(Good, not Perfect). Anything beyond this is a Miss. Requirements " +
@@ -100,6 +105,7 @@ public class HitDetectionManager : MonoBehaviour
 
         HitResult result;
         if (offsetMs <= perfectWindowMs) result = HitResult.Perfect;
+        else if (offsetMs <= greatWindowMs) result = HitResult.Great;
         else if (offsetMs <= goodWindowMs) result = HitResult.Good;
         else result = HitResult.Miss;
 

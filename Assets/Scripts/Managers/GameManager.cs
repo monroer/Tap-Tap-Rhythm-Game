@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         ChangeState(GameState.MainMenu);
+        StartGame(); // TEMP: for testing only, remove once a menu button exists
     }
 
     public void StartGame()
