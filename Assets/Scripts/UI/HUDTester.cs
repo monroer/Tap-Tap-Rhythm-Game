@@ -20,7 +20,7 @@ public class HUDTester : MonoBehaviour
             scoreManager.OnScoreChanged += HandleScoreChanged;
             scoreManager.OnStatsChanged += HandleStatsChanged;
         }
- 
+
         if (hotStreakStateMachine != null)
         {
             hotStreakStateMachine.OnStreakChanged += HandleStreakChanged;
@@ -35,7 +35,7 @@ public class HUDTester : MonoBehaviour
             scoreManager.OnScoreChanged -= HandleScoreChanged;
             scoreManager.OnStatsChanged -= HandleStatsChanged;
         }
- 
+
         if (hotStreakStateMachine != null)
         {
             hotStreakStateMachine.OnStreakChanged -= HandleStreakChanged;
@@ -50,22 +50,22 @@ public class HUDTester : MonoBehaviour
         accuracyText.text = "Accuracy: 100.0%";
         hotStreakStateText.text = "Normal";
     }
- 
+
     private void HandleScoreChanged(int newScore)
     {
         scoreText.text = $"Score: {newScore}";
     }
- 
+
     private void HandleStatsChanged(int hits, int misses, float accuracy)
     {
         accuracyText.text = $"Accuracy: {accuracy:F1}%";
     }
- 
+
     private void HandleStreakChanged(int streak)
     {
         streakText.text = $"Streak: {streak}";
     }
- 
+
     private void HandleHotStreakStateChanged(HotStreakState previous, HotStreakState current)
     {
         hotStreakStateText.text = current.ToString();
