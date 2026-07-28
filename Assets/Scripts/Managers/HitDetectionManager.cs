@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum HitResult { Perfect, Great, Good, Miss }
@@ -29,6 +30,8 @@ public class HitDetectionManager : MonoBehaviour
              "(Good, not Perfect). Anything beyond this is a Miss. Requirements " +
              "target ~80ms at the loose end.")]
     [SerializeField] private float goodWindowMs = 80f;
+
+    [SerializeField] private float noteConsiderationWindowMs = 180f;
 
     /// <summary>Fired after each tap is classified - hook ScoreManager/UI here.</summary>
     public event Action<int, HitResult> OnHitClassified;
@@ -111,13 +114,17 @@ public class HitDetectionManager : MonoBehaviour
 
         if (result == HitResult.Miss)
         {
-            target.RegisterMiss();
+            if (offsetMs <= noteConsiderationWindowMs)
+            {
+                target.RegisterMiss();
+            }
         }
         else
         {
             target.RegisterHit();
         }
 
+        OnHitClassified?.Invoke(rail, result);
         return result;
     }
 
