@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private HitDetectionManager hitDetectionManager;
     [SerializeField] private AudioSyncManager audioSyncManager;
     [SerializeField] private AudioClip songClip; // the track for whatever level is being played
+    [SerializeField] private BeatMapManager beatMapManager;
+    [SerializeField] private InputManager inputManager;
     
     public GameState CurrentState { get; private set; } = GameState.MainMenu;
 
@@ -33,6 +35,11 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         Time.timeScale = 1f;
+
+        if (beatMapManager != null && inputManager != null)
+        {
+            inputManager.railCount = beatMapManager.RailCount;
+        }
         if (audioSyncManager != null && songClip != null)
         {
             audioSyncManager.PlaySong(songClip);
