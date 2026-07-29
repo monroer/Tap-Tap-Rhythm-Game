@@ -9,7 +9,8 @@ public class Note : MonoBehaviour
     [SerializeField] private float missWindow = 0.2f;
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 hitZonePosition;
-
+    [SerializeField] private SpriteRenderer noteRenderer;
+    
     /// <summary>Which rail this note belongs to.</summary>
     public int Rail { get; private set; }
  
@@ -31,7 +32,23 @@ public class Note : MonoBehaviour
  
     private float elapsed;
     
-    public void Initialize(Vector3 start, Vector3 hitZone, float duration, int rail, float targetHitTime)
+    
+    private void Awake()
+    {
+        // Automatically find it if forget to assign it in the Inspector.
+        if (noteRenderer == null)
+        {
+            noteRenderer = GetComponent<SpriteRenderer>();
+        }
+    }
+    
+    public void Initialize(
+        Vector3 start,
+        Vector3 hitZone,
+        float duration,
+        int rail,
+        float targetHitTime,
+        Color railColor)
     {
         startPosition = start;
         hitZonePosition = hitZone;
@@ -40,6 +57,16 @@ public class Note : MonoBehaviour
         TargetHitTime = targetHitTime;
         elapsed = 0f;
         State = NoteState.Waiting;
+
+        SetColor(railColor);
+    }
+    
+    public void SetColor(Color color)
+    {
+        if (noteRenderer != null)
+        {
+            noteRenderer.color = color;
+        }
     }
 
     private void Update()

@@ -21,11 +21,32 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip songClipB;
     [SerializeField] private BeatMapManager beatMapManager;
     [SerializeField] private InputManager inputManager;
-    
+    [SerializeField] private LocalDataManager localDataManager;
+    [SerializeField] private ScoreManager scoreManager;
+    [SerializeField] private HotStreakStateMachine hotStreakStateMachine;
+    [SerializeField] private GameObject resultsPanel;
+    [SerializeField] private ResultsUI resultsUI;
+
     public GameState CurrentState { get; private set; } = GameState.MainMenu;
 
     // Other scripts can subscribe to this to react to state changes later
     public event Action<GameState> OnStateChanged;
+
+    private void OnEnable()
+    {
+        if (audioSyncManager != null)
+        {
+            audioSyncManager.OnSongFinished += EndGame;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (audioSyncManager != null)
+        {
+            audioSyncManager.OnSongFinished -= EndGame;
+        }
+    }
 
     private void Start()
     {
@@ -52,6 +73,7 @@ public class GameManager : MonoBehaviour
         {
             audioSyncManager.PlaySong(clipToPlay);
         }
+
         ChangeState(GameState.Gameplay);
     }
 
@@ -71,9 +93,41 @@ public class GameManager : MonoBehaviour
 
     public void EndGame()
     {
+        if (CurrentState != GameState.Gameplay)
+        {
+            return;
+        }
+
         Time.timeScale = 1f;
+
+        if (localDataManager != null &&
+            scoreManager != null &&
+            hotStreakStateMachine != null)
+        {
+            localDataManager.SaveSession(
+                scoreManager.Score,
+                scoreManager.Hits,
+                scoreManager.Misses,
+                hotStreakStateMachine.LongestStreak,
+                scoreManager.Accuracy
+            );
+
+            Debug.Log("Session data saved.");
+        }
+
+        if (resultsUI != null &&
+            scoreManager != null &&
+            hotStreakStateMachine != null)
+        {
+            resultsUI.ShowResults(scoreManager, hotStreakStateMachine);
+        }
+        else
+        {
+            Debug.LogError("GameManager: ResultsUI or manager references are not assigned.");
+        }
+
         audioSyncManager?.StopSong();
-        ChangeState(GameState.GameOver);
+        ChangeState(GameState.Results);
     }
 
     public void ShowResults()
@@ -94,9 +148,15 @@ public class GameManager : MonoBehaviour
         // Gameplay systems only run during actual gameplay. this single line
         // covers Pause, GameOver, Results, and MainMenu
         bool gameplayActive = newState == GameState.Gameplay;
-        if (noteSpawner != null) noteSpawner.enabled = gameplayActive;
-        if (hitDetectionManager != null) hitDetectionManager.enabled = gameplayActive;
-        
+        if (noteSpawner != null)
+            noteSpawner.enabled = gameplayActive;
+
+        if (hitDetectionManager != null)
+            hitDetectionManager.enabled = gameplayActive;
+
+        if (resultsPanel != null)
+            resultsPanel.SetActive(newState == GameState.Results);
+
         Debug.Log("GameManager state: " + newState);
         OnStateChanged?.Invoke(newState);
     }

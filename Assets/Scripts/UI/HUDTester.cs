@@ -45,10 +45,27 @@ public class HUDTester : MonoBehaviour
 
     private void Start()
     {
-        scoreText.text = "Score: 0";
-        streakText.text = "Streak: 0";
-        accuracyText.text = "Accuracy: 100.0%";
-        hotStreakStateText.text = "Normal";
+        if (scoreManager == null)
+        {
+            Debug.LogError("HUDTester: ScoreManager is not assigned.");
+            return;
+        }
+
+        if (hotStreakStateMachine == null)
+        {
+            Debug.LogError("HUDTester: HotStreakStateMachine is not assigned.");
+            return;
+        }
+
+        if (scoreText == null || streakText == null || accuracyText == null)
+        {
+            Debug.LogError("HUDTester: One or more HUD text fields are not assigned.");
+            return;
+        }
+
+        scoreText.text = $"Score: {scoreManager.Score}";
+        streakText.text = $"Streak: {hotStreakStateMachine.CurrentStreak}";
+        accuracyText.text = $"Accuracy: {scoreManager.Accuracy:F1}%";
     }
 
     private void HandleScoreChanged(int newScore)
@@ -66,9 +83,13 @@ public class HUDTester : MonoBehaviour
         streakText.text = $"Streak: {streak}";
     }
 
-    private void HandleHotStreakStateChanged(HotStreakState previous, HotStreakState current)
+    private void HandleHotStreakStateChanged(
+        HotStreakState previous,
+        HotStreakState current)
     {
-        hotStreakStateText.text = current.ToString();
-        Debug.Log($"Hot Streak state: {previous} -> {current}");
+        if (hotStreakStateText != null)
+        {
+            hotStreakStateText.text = current.ToString();
+        }
     }
 }

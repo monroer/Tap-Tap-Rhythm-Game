@@ -124,7 +124,7 @@ public class HitDetectionManager : MonoBehaviour
             target.RegisterHit();
         }
 
-        OnHitClassified?.Invoke(rail, result);
+      
         return result;
     }
 

@@ -11,9 +11,20 @@ public class NoteSpawner : MonoBehaviour
     [SerializeField] private float fallDuration = 2f;
     [SerializeField] private float spawnY = 5f;
     [SerializeField] private float hitZoneY = -3f;
+    [SerializeField] private HotStreakStateMachine hotStreakStateMachine;
+    
+    [Header("Note Colors")]
+    [SerializeField] private Color[] railColors =
+    {
+        new Color32(232, 84, 89, 255),   // Red
+        new Color32(233, 200, 63, 255),  // Yellow
+        new Color32(77, 186, 115, 255),  // Green
+        new Color32(77, 125, 219, 255)   // Blue
+    };
 
     private IReadOnlyList<NoteData> notes;
     private int nextNoteIndex;
+    private readonly List<Note> activeNotes = new List<Note>();
 
     private float GetRailX(int rail)
     {
@@ -23,6 +34,22 @@ public class NoteSpawner : MonoBehaviour
         Vector3 worldPoint = Camera.main.ScreenToWorldPoint(
             new Vector3(screenX, Screen.height / 2f, camDepth));
         return worldPoint.x;
+    }
+    
+    private void OnEnable()
+    {
+        if (hotStreakStateMachine != null)
+        {
+            hotStreakStateMachine.OnStreakChanged += HandleStreakChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (hotStreakStateMachine != null)
+        {
+            hotStreakStateMachine.OnStreakChanged -= HandleStreakChanged;
+        }
     }
 
     private void Start()
@@ -39,12 +66,61 @@ public class NoteSpawner : MonoBehaviour
         GameObject noteObj = Instantiate(notePrefab, startPos, Quaternion.identity);
         Note note = noteObj.GetComponent<Note>();
         
-        note.Initialize(startPos, hitPos, fallDuration, data.rail, data.time);
+        Color railColor = GetRailColor(data.rail);
+
+        note.Initialize(
+            startPos,
+            hitPos,
+            fallDuration,
+            data.rail,
+            data.time,
+            railColor);
+        
+        activeNotes.Add(note);
+        note.OnResolved += HandleNoteResolved;
+
+       
 
         if (hitDetectionManager != null)
         {
             hitDetectionManager.RegisterNote(note);
         }
+    }
+    
+    private void HandleStreakChanged(int currentStreak)
+    {
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
+        {
+            Note note = activeNotes[i];
+
+            if (note == null)
+            {
+                activeNotes.RemoveAt(i);
+                continue;
+            }
+        }
+    }
+    
+
+    private void HandleNoteResolved(Note note)
+    {
+        if (note == null)
+        {
+            return;
+        }
+
+        note.OnResolved -= HandleNoteResolved;
+        activeNotes.Remove(note);
+    }
+    private Color GetRailColor(int rail)
+    {
+        if (railColors == null || rail < 0 || rail >= railColors.Length)
+        {
+            Debug.LogWarning($"No color configured for rail {rail}. Using white.");
+            return Color.white;
+        }
+
+        return railColors[rail];
     }
     private void Update()
     {
