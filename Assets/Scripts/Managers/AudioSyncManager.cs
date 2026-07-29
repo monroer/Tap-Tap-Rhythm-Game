@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -24,6 +25,8 @@ public class AudioSyncManager : MonoBehaviour
     private double pauseStartDspTime;
     private bool isPlaying;
     private bool isPaused;
+    private bool songFinishedSent;
+    public event Action OnSongFinished;
 
     public float SongTime => isPlaying 
         ? (float)(AudioSettings.dspTime - dspSongStartTime)
@@ -42,6 +45,7 @@ public class AudioSyncManager : MonoBehaviour
         musicSource.PlayScheduled(dspSongStartTime);
         isPlaying = true;
         isPaused = false;
+        songFinishedSent = false;
     }
 
     /// <summary>Pauses playback in a way SongTime can recover from cleanly (see Resume).</summary>
@@ -74,13 +78,17 @@ public class AudioSyncManager : MonoBehaviour
         musicSource.Stop();
         isPlaying = false;
         isPaused = false;
+        songFinishedSent = false;
     }
 
     private float lastLogTime;
 
     private void Update()
     {
-        if (!isPlaying || isPaused) return;
+        if (!isPlaying || isPaused || musicSource.clip == null)
+        {
+            return;
+        }
 
         if (SongTime - lastLogTime >= 1f)
         {
@@ -88,9 +96,14 @@ public class AudioSyncManager : MonoBehaviour
             Debug.Log($"SongTime: {SongTime:F3}s | musicSource.time: {musicSource.time:F3}");
         }
 
-        if (!musicSource.isPlaying && musicSource.time == 0f)
+        if (!songFinishedSent &&
+            SongTime >= musicSource.clip.length)
         {
+            songFinishedSent = true;
             isPlaying = false;
+
+            Debug.Log("Song finished.");
+            OnSongFinished?.Invoke();
         }
     }
 }

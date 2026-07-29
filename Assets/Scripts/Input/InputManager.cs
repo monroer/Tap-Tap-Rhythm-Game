@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
 {
     [Range(3, 5)]
     public int railCount = 4;
+    [SerializeField] private NoteTarget[] noteTargets;
 
     public event Action<int, double> OnRailTapped;
 
@@ -43,6 +44,13 @@ public class InputManager : MonoBehaviour
     {
         int rail = GetRailFromScreenPosition(screenPosition);
         if (rail < 0) return;
+        
+        if (noteTargets != null &&
+            rail < noteTargets.Length &&
+            noteTargets[rail] != null)
+        {
+            noteTargets[rail].PlayTapAnimation();
+        }
 
         OnRailTapped?.Invoke(rail, AudioSettings.dspTime);
     }

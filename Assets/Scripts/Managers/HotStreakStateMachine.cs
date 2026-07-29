@@ -33,6 +33,9 @@ public class HotStreakStateMachine : MonoBehaviour
     public HotStreakState CurrentState { get; private set; } = HotStreakState.Normal;
     public int CurrentStreak { get; private set; }
     public int LongestStreak { get; private set; }
+    
+    public int BuildingThreshold => streakForBuilding;
+    public int HotStreakThreshold => streakForHotStreak;
 
     public float CurrentMultiplier
     {
