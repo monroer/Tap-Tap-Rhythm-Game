@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private HitDetectionManager hitDetectionManager;
     [SerializeField] private AudioSyncManager audioSyncManager;
     [SerializeField] private AudioClip songClip; // the track for whatever level is being played
+    [SerializeField] private AudioClip songClipB;
     [SerializeField] private BeatMapManager beatMapManager;
     [SerializeField] private InputManager inputManager;
     
@@ -40,9 +41,16 @@ public class GameManager : MonoBehaviour
         {
             inputManager.railCount = beatMapManager.RailCount;
         }
-        if (audioSyncManager != null && songClip != null)
+
+        AudioClip clipToPlay = songClip;
+        if (beatMapManager != null && beatMapManager.CurrentSongMode == SongMode.SongB)
         {
-            audioSyncManager.PlaySong(songClip);
+            clipToPlay = songClipB;
+        }
+
+        if (audioSyncManager != null && clipToPlay != null)
+        {
+            audioSyncManager.PlaySong(clipToPlay);
         }
         ChangeState(GameState.Gameplay);
     }
