@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum NoteState { Waiting, Hit, Missed }
@@ -10,6 +11,7 @@ public class Note : MonoBehaviour
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 hitZonePosition;
     [SerializeField] private SpriteRenderer noteRenderer;
+    [SerializeField] private TrailRenderer trailRenderer;
     
     /// <summary>Which rail this note belongs to.</summary>
     public int Rail { get; private set; }
@@ -35,10 +37,13 @@ public class Note : MonoBehaviour
     
     private void Awake()
     {
-        // Automatically find it if forget to assign it in the Inspector.
         if (noteRenderer == null)
         {
             noteRenderer = GetComponent<SpriteRenderer>();
+        }
+        if (trailRenderer == null)
+        {
+            trailRenderer = GetComponent<TrailRenderer>();
         }
     }
     
@@ -66,6 +71,36 @@ public class Note : MonoBehaviour
         if (noteRenderer != null)
         {
             noteRenderer.color = color;
+        }
+    }
+
+    public void ApplyHotStreakVisual(HotStreakState state)
+    {
+        if (trailRenderer == null) return;
+
+        Color baseColor = noteRenderer != null ? noteRenderer.color : Color.white;
+
+        switch (state)
+        {
+            case HotStreakState.HotStreak:
+                trailRenderer.enabled = true;
+                trailRenderer.time = 0.35f;
+                trailRenderer.widthMultiplier = 0.5f;
+                trailRenderer.startColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.9f);
+                trailRenderer.endColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0f);
+                break;
+
+            case HotStreakState.Building:
+                trailRenderer.enabled = true;
+                trailRenderer.time = 0.15f;
+                trailRenderer.widthMultiplier = 0.25f;
+                trailRenderer.startColor = new Color(baseColor.r, baseColor.g, baseColor.b, 0.5f);
+                trailRenderer.endColor = new Color (baseColor.r, baseColor.g, baseColor.b, 0f);
+                break;
+
+            default:
+            trailRenderer.enabled = false;
+            break;
         }
     }
 
