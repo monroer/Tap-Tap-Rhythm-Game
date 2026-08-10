@@ -40,7 +40,7 @@ public class NoteSpawner : MonoBehaviour
     {
         if (hotStreakStateMachine != null)
         {
-            hotStreakStateMachine.OnStreakChanged += HandleStreakChanged;
+            hotStreakStateMachine.OnHotStreakStateChanged += HandleHotStreakStateChanged;
         }
     }
 
@@ -48,7 +48,7 @@ public class NoteSpawner : MonoBehaviour
     {
         if (hotStreakStateMachine != null)
         {
-            hotStreakStateMachine.OnStreakChanged -= HandleStreakChanged;
+            hotStreakStateMachine.OnHotStreakStateChanged -= HandleHotStreakStateChanged;
         }
     }
 
@@ -76,6 +76,11 @@ public class NoteSpawner : MonoBehaviour
             data.time,
             railColor);
         
+        if (hotStreakStateMachine != null)
+        {
+            note.ApplyHotStreakVisual(hotStreakStateMachine.CurrentState);
+        }
+
         activeNotes.Add(note);
         note.OnResolved += HandleNoteResolved;
 
@@ -87,7 +92,7 @@ public class NoteSpawner : MonoBehaviour
         }
     }
     
-    private void HandleStreakChanged(int currentStreak)
+    private void HandleHotStreakStateChanged(HotStreakState previous, HotStreakState current)
     {
         for (int i = activeNotes.Count - 1; i >= 0; i--)
         {
@@ -98,6 +103,8 @@ public class NoteSpawner : MonoBehaviour
                 activeNotes.RemoveAt(i);
                 continue;
             }
+
+            note.ApplyHotStreakVisual(current);
         }
     }
     
