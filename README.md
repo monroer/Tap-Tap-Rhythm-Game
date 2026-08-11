@@ -27,12 +27,12 @@ Installation Option B: Physical Android Device
 Using the Application
 Once launched, either on the Android platform or in the Unity Editor, the application can be explored as follows:
 
-Main Menu: Toggle 4-rail mode on or off (leaving it off plays in 3-rail mode), select a song from the dropdown menu (Song A or B). The default Song choice is Song A. Tap Start Game to begin the game.
-Gameplay: Notes fall down colored rails toward the horizontal target line near the bottom of the screen. Tap or click (if running in Unity) the rail directly below a note as it crosses the target line. Score, streak, and accuracy update live in the HUD.
-Hot Streak: Build several consecutive hits in a row to trigger Hot Streak mode. The score multiplier increases, and the background and note trails change visually to indicate Hot Streak. A single miss resets the streak and multiplier back to baseline.
-Pause: Tap the Pause button in the top corner during gameplay to access Resume, Restart, and Back to Main Menu options.
-Results Screen: After a song completes, a summary screen displays the final score, accuracy, hits, misses, and longest streak. From here, choose to either Restart Song to play again or Main Menu to select a different song or rail mode.
-Local Data: All session and highscore data is shown directly after the song finishes. It is not stored at this point in time for top highscores. No account is needed, no sign-in, and no network connection at any point to use the application.
+- Main Menu: Toggle 4-rail mode on or off (leaving it off plays in 3-rail mode), select a song from the dropdown menu (Song A or B). The default Song choice is Song A. Tap Start Game to begin the game.
+- Gameplay: Notes fall down colored rails toward the horizontal target line near the bottom of the screen. Tap or click (if running in Unity) the rail directly below a note as it crosses the target line. Score, streak, and accuracy update live in the HUD.
+- Hot Streak: Build several consecutive hits in a row to trigger Hot Streak mode. The score multiplier increases, and the background and note trails change visually to indicate Hot Streak. A single miss resets the streak and multiplier back to baseline.
+- Pause: Tap the Pause button in the top corner during gameplay to access Resume, Restart, and Back to Main Menu options.
+- Results Screen: After a song completes, a summary screen displays the final score, accuracy, hits, misses, and longest streak. From here, choose to either Restart Song to play again or Main Menu to select a different song or rail mode.
+- Local Data: All session and highscore data is shown directly after the song finishes. It is not stored at this point in time for top highscores. No account is needed, no sign-in, and no network connection at any point to use the application.
 
 System Requirements and Notes
 - Android 8.0 or newer is recommended.
