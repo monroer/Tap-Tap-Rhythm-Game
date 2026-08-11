@@ -7,6 +7,10 @@ public class RailVisualsController : MonoBehaviour
 
     private void Start()
     {
+        ApplyRailMode();
+    }
+    public void ApplyRailMode()
+    {
         if (beatMapManager == null || target4 == null) return;
         target4.SetActive(beatMapManager.RailCount == 4);
     }

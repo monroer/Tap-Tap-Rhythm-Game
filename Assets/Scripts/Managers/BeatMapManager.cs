@@ -449,6 +449,24 @@ public class BeatMapManager : MonoBehaviour
     public int RailCount => (int)railMode;
     public SongMode CurrentSongMode => songMode;
 
+    /// <summary>
+    /// Changes active rail mode. Calls before start game so rail and notes reflect selection
+    /// </summary>
+
+    public void SetRailMode(RailMode mode)
+    {
+        railMode = mode;
+    }
+
+    /// <summary>
+    /// Changes the active song.
+    /// </summary>
+    
+    public void SetSongMode(SongMode mode)
+    {
+        songMode = mode;
+    }
+
     public IReadOnlyList<NoteData> Notes
     {
         get
