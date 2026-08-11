@@ -131,16 +131,35 @@ public class NoteSpawner : MonoBehaviour
     }
     private void Update()
     {
-        if (notes == null || nextNoteIndex >= notes.Count) return;
+        if (notes == null) return;
 
-        NoteData nextNote = notes[nextNoteIndex];
-        float spawnTime = nextNote.time - fallDuration;
-
-        if (audioSyncManager.SongTime >= spawnTime)
+        while (nextNoteIndex < notes.Count && audioSyncManager.SongTime >= notes[nextNoteIndex].time - fallDuration)
         {
-            SpawnNote(nextNote);
+            SpawnNote(notes[nextNoteIndex]);
             nextNoteIndex++;
         }
+    }
+
+    public void ResetSpawner()
+    {
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
+        {
+            Note note = activeNotes[i];
+            if (note != null)
+            {
+                note.OnResolved -= HandleNoteResolved;
+                Destroy(note.gameObject);
+            }
+        }
+        activeNotes.Clear();
+
+        if (hitDetectionManager != null)
+        {
+            hitDetectionManager.ClearAllNotes();
+        }
+
+        nextNoteIndex = 0;
+        notes = beatMapManager.Notes;
     }
 
     /// <summary>Stops spawning new notes. Notes already in flight are unaffected. Intended for GameManager to call on pause/game over.</summary>

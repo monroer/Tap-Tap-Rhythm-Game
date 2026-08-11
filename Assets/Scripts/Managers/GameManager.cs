@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 // State machine skeleton. Just handles transitions between states for now,
 // no actual gameplay logic wired in yet.
@@ -25,7 +26,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private HotStreakStateMachine hotStreakStateMachine;
     [SerializeField] private GameObject resultsPanel;
+    [SerializeField] private GameObject mainMenuPanel;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject hudPanel;
     [SerializeField] private ResultsUI resultsUI;
+    [SerializeField] private RailVisualsController railVisualsController;
 
     public GameState CurrentState { get; private set; } = GameState.MainMenu;
 
@@ -51,30 +56,57 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         ChangeState(GameState.MainMenu);
-        StartGame(); // TEMP: for testing only, remove once a menu button exists
     }
 
-    public void StartGame()
+    public void StartGame(RailMode railMode, SongMode songMode)
     {
-        Time.timeScale = 1f;
-
-        if (beatMapManager != null && inputManager != null)
+        if (beatMapManager != null)
         {
-            inputManager.railCount = beatMapManager.RailCount;
+            beatMapManager.SetRailMode(railMode);
+            beatMapManager.SetSongMode(songMode);
         }
 
-        AudioClip clipToPlay = songClip;
-        if (beatMapManager != null && beatMapManager.CurrentSongMode == SongMode.SongB)
+        if (railVisualsController != null)
         {
-            clipToPlay = songClipB;
+            railVisualsController.ApplyRailMode();
         }
 
-        if (audioSyncManager != null && clipToPlay != null)
+        if (noteSpawner != null)
         {
-            audioSyncManager.PlaySong(clipToPlay);
+            noteSpawner.ResetSpawner();
         }
 
-        ChangeState(GameState.Gameplay);
+        if (scoreManager != null)
+        {
+            scoreManager.ResetForNewSong();
+        }
+
+        if (hotStreakStateMachine != null)
+        {
+            hotStreakStateMachine.ResetForNewSong();
+        }
+
+        StartGame();
+    }
+
+    public void RestartGame()
+    {
+        if (noteSpawner != null)
+        {
+            noteSpawner.ResetSpawner();
+        }
+
+        if (scoreManager != null)
+        {
+            scoreManager.ResetForNewSong();
+        }
+
+        if (hotStreakStateMachine != null)
+        {
+            hotStreakStateMachine.ResetForNewSong();
+        }
+
+        StartGame();
     }
 
     public void PauseGame()
@@ -142,6 +174,29 @@ public class GameManager : MonoBehaviour
         ChangeState(GameState.MainMenu);
     }
 
+    private void StartGame()
+    {
+        Time.timeScale = 1f;
+
+        if (beatMapManager != null && inputManager != null)
+     {
+           inputManager.railCount = beatMapManager.RailCount;
+        }
+
+        AudioClip clipToPlay = songClip;
+        if (beatMapManager != null && beatMapManager.CurrentSongMode == SongMode.SongB)
+        {
+            clipToPlay = songClipB;
+        }
+
+        if (audioSyncManager != null && clipToPlay != null)
+        {
+            audioSyncManager.PlaySong(clipToPlay);
+        }
+
+        ChangeState(GameState.Gameplay);
+    }   
+
     private void ChangeState(GameState newState)
     {
         CurrentState = newState;
@@ -156,6 +211,15 @@ public class GameManager : MonoBehaviour
 
         if (resultsPanel != null)
             resultsPanel.SetActive(newState == GameState.Results);
+        
+        if (mainMenuPanel != null)
+            mainMenuPanel.SetActive(newState == GameState.MainMenu);
+
+        if (pausePanel != null)
+            pausePanel.SetActive(newState == GameState.Paused);
+
+        if (hudPanel != null)
+            hudPanel.SetActive(newState == GameState.Gameplay || newState == GameState.Paused);
 
         Debug.Log("GameManager state: " + newState);
         OnStateChanged?.Invoke(newState);

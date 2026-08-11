@@ -40,6 +40,7 @@ public class AudioSyncManager : MonoBehaviour
             return;
         }
 
+        musicSource.Stop();
         musicSource.clip = clip;
         dspSongStartTime = AudioSettings.dspTime + scheduleLeadTime;
         musicSource.PlayScheduled(dspSongStartTime);

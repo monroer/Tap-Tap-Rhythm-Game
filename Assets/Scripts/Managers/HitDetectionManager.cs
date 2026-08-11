@@ -19,17 +19,17 @@ public class HitDetectionManager : MonoBehaviour
     [Header("Timing Windows (ms)")]
     [Tooltip("Max |tap time - target time|, in ms, still counted as Perfect. " +
              "Requirements target ~24ms at the tight end.")]
-    [SerializeField] private float perfectWindowMs = 24f;
+    [SerializeField] private float perfectWindowMs = 50f;
 
     [Tooltip("Max |tap time - target time|, in ms, still counted as a hit at all " +
              "(Great, almost Perfect). Sits between Good and Perfect. Requirements " +
              "target ~40ms between tight and loose end.")]
-    [SerializeField] private float greatWindowMs = 40f;
+    [SerializeField] private float greatWindowMs = 90f;
 
     [Tooltip("Max |tap time - target time|, in ms, still counted as a hit at all " +
              "(Good, not Perfect). Anything beyond this is a Miss. Requirements " +
              "target ~80ms at the loose end.")]
-    [SerializeField] private float goodWindowMs = 80f;
+    [SerializeField] private float goodWindowMs = 150f;
 
     [SerializeField] private float noteConsiderationWindowMs = 180f;
 
@@ -68,6 +68,21 @@ public class HitDetectionManager : MonoBehaviour
 
         list.Add(note);
         note.OnResolved += HandleNoteResolved;
+    }
+
+    public void ClearAllNotes()
+    {
+        foreach (var list in activeNotesByRail.Values)
+        {
+            foreach (var note in list)
+            {
+                if (note != null)
+                {
+                    note.OnResolved -= HandleNoteResolved;
+                }
+            }
+        }
+        activeNotesByRail.Clear();
     }
 
     private void HandleNoteResolved(Note note)
