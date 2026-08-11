@@ -1389,8 +1389,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotStreakStateMachine
   hitDetectionManager: {fileID: 739365730}
-  streakForBuilding: 10
-  streakForHotStreak: 25
+  streakForBuilding: 3
+  streakForHotStreak: 5
   normalMultiplier: 1
   buildingMultiplier: 2
   hotStreakMultiplier: 5
