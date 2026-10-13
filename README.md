@@ -3,6 +3,48 @@
 
 By Jared Reddy, Riley Monroe, and Philip Gadsden
 
+A lightweight, fully client-side tap-rhythm game for Android, built in Unity over an 8-week capstone sprint. No ads, no accounts, no live-service overhead, just pick up the device and play.
+
+<img width="455" height="1005" alt="image" src="https://github.com/user-attachments/assets/0af5f536-a233-4caf-a8bd-13666deb5bbf" /><img width="453" height="1004" alt="image" src="https://github.com/user-attachments/assets/64ab2da7-8ee3-4c23-b5f2-be958749a832" /><img width="452" height="1003" alt="image" src="https://github.com/user-attachments/assets/72256d9d-b953-455e-8d7c-615f7a60e5ce" />
+
+
+What It Does
+
+Players choose a 3-rail or 4-rail mode and one of two songs. Notes fall down color-coded rails in time with the beat, and the player taps the matching rail as each note reaches the hit zone. Timing accuracy is graded (Good / Great / Perfect!), and consecutive hits build a streak that triggers Hot Streak mode; a score multiplier with escalating visual feedback. A miss resets the streak. At the end of a song, a results screen shows final score, accuracy, hit/miss count, and longest streak.
+
+My Contributions
+
+This was a 3-person team project (Jared Reddy, Riley Monroe, Philip Gadsden). I owned the gameplay logic layer:
+
+InputManager — multi-rail tap detection using Unity's Input System package (event-driven, low-latency multi-touch), firing onRailTapped events with rail index + a DSP timestamp
+HitDetectionManager — compares tap timing against each note's target hit time to classify hits vs. misses, tuned to a ~24–80ms responsiveness window
+ScoreManager — tracks score, hits, misses, accuracy, and multiplier with Inspector-exposed tuning values
+HotStreakStateMachine — Normal → Building → Hot Streak transitions, streak tracking, miss-reset logic, and state-change events consumed by the HUD/visuals
+GameManager — top-level game state machine (MainMenu → Playing → Paused → GameOver → Results)
+
+Key technical problem solved: frame-based input polling produced inconsistent timing delay. I solved this by using AudioSettings.dspTime as a shared clock on both the input side and the note-spawning side, rather than each system tracking time independently — this also fixed timing drift across pause/resume.
+
+Tech Stack
+Engine/Language: Unity 6, C#
+Systems: Unity Input System package, AudioSettings.dspTime for audio-synced timing, TrailRenderer for Hot Streak visuals, PlayerPrefs for local stats storage
+UI: Unity UI (canvas-based) + TextMeshPro
+Tools: Android Studio (build/APK), VS Code, GitHub with branch-protection rulesets and required PRs, GitHub Projects for task tracking
+Lessons Learned
+Editor testing ≠ physical device testing — an EventSystem bug made menu buttons unresponsive on-device despite working fine in-editor
+A shared clock only works if every system reads from it — independently-timed components drift
+Integration and cross-system wiring consistently took longer than building each feature in isolation
+Try It
+
+An installable APK is available in Releases ((https://github.com/monroer/tap-tap-rhythm/releases/tag/v1.0.0)). Requires Android 7.0+.
+
+Future Work
+
+Broader device testing (only tested on a Moto G Pure), iOS support, additional songs, and custom song upload.
+
+
+
+
+
 Installation Option A: Android Virtual Device
 1. Install Android Studio (free) from developer.android.com/studio, if not already installed.
 2. Open Android Studio and go to Tools → Device Manager.
