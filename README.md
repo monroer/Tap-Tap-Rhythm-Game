@@ -35,7 +35,7 @@ A shared clock only works if every system reads from it — independently-timed 
 Integration and cross-system wiring consistently took longer than building each feature in isolation
 Try It
 
-An installable APK is available in Releases ((https://github.com/monroer/Tap-Tap-Rhythm-Capstone/releases/tag/v1.0.0)). Requires Android 7.0+.
+An installable APK is available in Releases (https://github.com/monroer/Tap-Tap-Rhythm-Game/releases/tag/v1.0.0). Requires Android 7.0+.
 
 Future Work
 
